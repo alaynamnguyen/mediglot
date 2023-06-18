@@ -11,8 +11,9 @@
 <body>
   <img src="{{ url_for('static', filename='hospital.png') }}" class="icon" />
   <h3>Mediglot.ai</h3>
-  <form action="{{ next }}" method="post">
+  <form action="{{ next }}" method="post" enctype="multipart/form-data">
     <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here."></textarea> 
+    <input type="file" name="audio" accept="audio/*">
     <input type="submit" name="simplify" value="Simplify" class="simplify-button" />
     <input type="submit" name="restart" value="Restart" class="restart-button" style="background-color: #1094a3; margin-top: 12px;" />
   </form>
@@ -24,4 +25,4 @@
   </audio>
   {% endif %}
 </body>
-</body>
+</html>
