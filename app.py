@@ -1,12 +1,16 @@
 import os
 from translate import Translator
 import openai
-from flask import Flask, redirect, render_template, request, url_for
+from flask import Flask, redirect, render_template, request, url_for, request
 from gtts import gTTS
-from tempfile import NamedTemporaryFile
-import requests
+from translatepy import Translator
+from translatepy.exceptions import TranslatepyException, UnknownLanguage
+from werkzeug.utils import secure_filename
+from pydub import AudioSegment
+translator = Translator()
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'recording'
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=("GET", "POST"))
@@ -17,11 +21,17 @@ def index():
             if "audio" not in request.files:
                 return "No audio file provided", 400
             
-            # Convert speech to text
-            audio_file= open("Delaware St 2.mp3", "rb")
-            medical_text = openai.Audio.transcribe("whisper-1", audio_file)
-            medical_text = medical_text['text'].lstrip('\n')
-            print(medical_text)
+            # recording = "Delaware St 2.mp3"
+            # audio_file = open(recording, "rb")
+            text_file = request.form['medical_text']
+
+            medical_text = text_file
+
+            # if audio_file:
+            #     transcript = openai.Audio.transcribe("whisper-1", audio_file)
+            #     medical_text = transcript['text'].lstrip('\n')
+            # else:
+            #     medical_text = text_file
 
             # Simplify english transcript
             simplified_text = generate_prompt(medical_text)
@@ -29,10 +39,10 @@ def index():
                 model="gpt-3.5-turbo",
                 messages=[{"role": "user", "content": simplified_text}]
             )
-            translated = response['choices'][0].message.content.lstrip('\n')
+            result = response['choices'][0].message.content.lstrip('\n')
 
             # Translate simplified english
-            translated_result = translate_and_join2(translated, translate_en_to_es)
+            translated_result = translate_and_join(result)
         
             # Generate speech using gTTS
             tts = gTTS(translated_result, lang='es')
@@ -50,12 +60,12 @@ def index():
                 return "No audio file provided", 400
             
             # Convert speech to text
-            audio_file= open("Delaware St 2.mp3", "rb")
-            transcript = openai.Audio.transcribe("whisper-1", audio_file)
-            medical_text = transcript['text'].lstrip('\n')
+            # audio_file= open("Delaware St 2.mp3", "rb")
+            # transcript = openai.Audio.transcribe("whisper-1", audio_file)
+            # medical_text = transcript['text'].lstrip('\n')
 
             # Translate simplified english
-            translated_result = translate_and_join2(medical_text, translate_en_to_es)
+            translated_result = translate_and_join(medical_text)
         
             # Generate speech using gTTS
             tts = gTTS(translated_result, lang='es')
@@ -78,8 +88,8 @@ def more():
             messages=[{"role": "user", "content": simplified_text}]
         )
 
-        result2 = response['choices'][0].message.content.lstrip('\n')
-        translated_result = translate_and_join(result2, translate_en_to_es)
+        result = response['choices'][0].message.content.lstrip('\n')
+        translated_result = translate_and_join(result)
     
         # Generate speech using gTTS
         tts = gTTS(translated_result, lang='es')
@@ -109,31 +119,48 @@ def generate_simplified_text(medical_text):
         medical_text.capitalize()
     )
 
-def translate_en_to_es(text):
-    translator = Translator(from_lang='en', to_lang='es')
-    translation = translator.translate(text)
-    return translation
+def translate(text):
+    try:
+        result = translator.translate(text, destination_language = 'es', source_language = 'auto')
+        return result
+    except UnknownLanguage as err:
+        print('Couldn\'t recognize the language. The language found is: ', err.guessed_language)
+        print('Please try recording again or try typing in text.')
+        return
+    except TranslatepyException:
+        print('An error occured while translating. Please try again.')
+        return
+    except Exception:
+        print('An unknown error occured')
+        return    
 
-def translate_and_join(text, translate):
+def translate_and_join(text):
     # Split text by periods
     split_text = text.split('. ')
     
     # Loop through each element and apply 'translate' function
-    translated_text = [translate(sentence)[:-1] for sentence in split_text]
+    translated_text = [translate(sentence).result[:-1] for sentence in split_text]
     
     # Join the translated text together
     joined_text = '. '.join(translated_text).strip()
     
     return joined_text
 
-def translate_and_join2(transcript, translate):
-    # Split text by periods
-    split_text = transcript.split('. ')
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'audio' not in request.files:
+        return 'No file part', 400
+    file = request.files['audio']
+    if file.filename == '':
+        return 'No selected file', 400
+    if file:
+        filename = secure_filename(file.filename)
+        webm_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(webm_path)
+        
+        # convert webm file to mp3
+        audio = AudioSegment.from_file(webm_path, format="webm")
+        mp3_path = os.path.splitext(webm_path)[0] + '.mp3'
+        audio.export(mp3_path, format="mp3")
 
-    # Loop through each element and apply 'translate' function
-    translated_text = [translate(sentence)[:-1] for sentence in split_text]
-
-    # Join the translated text together
-    joined_text = '. '.join(translated_text).strip()
-
-    return joined_text
+        return 'File uploaded and converted to MP3 successfully', 200

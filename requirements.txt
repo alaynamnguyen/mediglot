@@ -28,3 +28,4 @@ gtts
 translatepy
 featureform
 sentence-transformers
+pydub

@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <head>
   <title>Mediglot.ai</title>
-  <link
-    rel="shortcut icon"
-    href="{{ url_for('static', filename='hospital.png') }}"
-  />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='hospital.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}" />
 </head>
 
@@ -18,6 +15,10 @@
     <input type="submit" id="loadingButton" class="loading-button" value="Loading..." style="background-color: #67bba6; margin-top: 12px;" disabled />
     <input type="submit" name="translate" value="Translate" class="translate-button" style="background-color: #a38a10; margin-top: 12px;" />
     <input type="submit" name="restart" value="Restart" class="restart-button" style="background-color: #1094a3; margin-top: 12px;" />
+
+    <!-- Added Voice Recording Buttons -->
+    <button id="start" disabled>Start recording</button>
+    <button id="stop" disabled>Stop recording</button>
   </form>
   <div class="result">
     <textarea type="text" name="simplified_text" placeholder="Simplified text here.">{{ result }}</textarea> 
@@ -34,6 +35,52 @@
       document.getElementById("simplifyButton").style.display = "none";
       document.getElementById("loadingButton").style.display = "inline-block";
     }
+    
+    let mediaRecorder;
+    let chunks = [];
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(stream => {
+        mediaRecorder = new MediaRecorder(stream);
+        document.getElementById('start').disabled = false;
+
+        mediaRecorder.ondataavailable = event => {
+          chunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          let blob = new Blob(chunks, { 'type' : 'audio/webm' });
+          chunks = [];
+          let formData = new FormData();
+          formData.append('audio', blob, 'audio.webm');
+
+          fetch('/upload', { method: 'POST', body: formData })
+              .then(response => {
+                  if (!response.ok) {
+                      throw new Error('Network response was not ok');
+                  }
+                  return response.text();
+              })
+              .then(data => {
+                  console.log('File uploaded successfully:', data);
+              })
+              .catch(error => {
+                  console.error('Error:', error);
+              });
+        };
+      });
+
+    document.getElementById('start').addEventListener('click', () => {
+      mediaRecorder.start();
+      document.getElementById('stop').disabled = false;
+      document.getElementById('start').disabled = true;
+    });
+
+    document.getElementById('stop').addEventListener('click', () => {
+      mediaRecorder.stop();
+      document.getElementById('stop').disabled = true;
+      document.getElementById('start').disabled = false;
+    });
   </script>
 </body>
 </html>
