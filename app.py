@@ -107,7 +107,7 @@ def more():
         tts.save('static/output.mp3')
         next_url = "/more.html"
 
-        return redirect(url_for("more", result=translated_result, original=original, next=next_url, loading=True))
+        return redirect(url_for("more", result=translated_result, original=medical_text, next=next_url, loading=True))
     elif "restart" in request.form:
         response = ""
         next_url = "/"
