@@ -3,11 +3,11 @@ from translate import Translator
 import openai
 from flask import Flask, redirect, render_template, request, url_for, request
 from gtts import gTTS
-# from translatepy import Translator
-# from translatepy.exceptions import TranslatepyException, UnknownLanguage
-# from werkzeug.utils import secure_filename
-# from pydub import AudioSegment
-# translator = Translator()
+from translatepy import Translator
+from translatepy.exceptions import TranslatepyException, UnknownLanguage
+from werkzeug.utils import secure_filename
+from pydub import AudioSegment
+translator = Translator()
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'recording'
