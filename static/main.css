@@ -68,7 +68,11 @@ input[type="submit"] {
   font-weight: bold;
   margin-top: 40px;
   height: auto;
+  width: 80%;
 }
 audio {
-  margin-top: 10px;
+  margin-top: 12px;
 }
+/* .hidden {
+  display: none;
+} */
