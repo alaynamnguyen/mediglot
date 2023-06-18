@@ -9,6 +9,8 @@ from werkzeug.utils import secure_filename
 from pydub import AudioSegment
 translator = Translator()
 
+# Also need to run: brew install ffmpeg
+
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'recording'
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -34,7 +36,7 @@ def index():
             # else:
             #     medical_text = text_file
             # Convert speech to text
-            audio_file= open("Delaware St 2.mp3", "rb")
+            audio_file= open("recording/audio.mp3", "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file)
             medical_text = transcript['text'].lstrip('\n')
 
@@ -55,12 +57,12 @@ def index():
             tts.save('static/output.mp3')
             next_url = "/more.html"
 
-            return redirect(url_for("more", result=translated_result, next=next_url, loading=True))
+            return redirect(url_for("more", result=translated_result, original = medical_text, next=next_url, loading=True))
         elif "restart" in request.form:
             medical_text = ""
             response = ""
             next_url = "/"
-            return redirect(url_for("index", result=response, next=next_url, loading=False))
+            return redirect(url_for("index", result=response, original = medical_text, next=next_url, loading=False))
         elif "translate" in request.form:
             # Check if the request contains an audio file
             if "audio" not in request.files:
@@ -80,12 +82,14 @@ def index():
             tts.save('static/output.mp3')
             next_url = "/more.html"
 
-            return redirect(url_for("more", result=translated_result, next=next_url, loading=True))
+            return redirect(url_for("more", result=translated_result, original = medical_text, next=next_url, loading=True))
     
+    print(request.args)
     result = request.args.get("result")
+    original = request.args.get("original")
     # translated_result = translate_en_to_es(result)
     
-    return render_template("index.html", result=result, medical_text=medical_text, loading=False)
+    return render_template("index.html", result=result, original=original, loading=False)
 
 @app.route("/more", methods=("GET", "POST"))
 def more():
@@ -105,14 +109,15 @@ def more():
         tts.save('static/output.mp3')
         next_url = "/more.html"
 
-        return redirect(url_for("more", result=translated_result, next=next_url, loading=True))
+        return redirect(url_for("more", result=translated_result, original=original, next=next_url, loading=True))
     elif "restart" in request.form:
         response = ""
         next_url = "/"
-        return redirect(url_for("index", result=response, next=next_url, loading=False))
+        return redirect(url_for("index", result=response, original=original, next=next_url, loading=False))
 
     result = request.args.get("result")
-    return render_template("more.html", result=result, loading=False)
+    original = request.args.get("original")
+    return render_template("more.html", result=result, original=original, loading=False)
 
 def generate_prompt(medical_text):
     return """Rephrase this text: "{}" into layman's terms 

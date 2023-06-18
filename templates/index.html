@@ -25,7 +25,7 @@
     <div class="column">
       <h3>Original</h3>
       <form action="{{ next }}" method="post" enctype="multipart/form-data">
-        <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here."></textarea> 
+        <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here.">{% if original %}{{ original }}{% endif %}</textarea> 
         <input type="file" name="audio" accept="audio/*">
         <input type="submit" name="simplify" value="Simplify" class="simplify-button" id="simplifyButton" style="margin-top: 12px;" onclick="showLoadingButton()" />
         <input type="submit" id="loadingButton" class="loading-button" value="Loading..." style="background-color: #67bba6; margin-top: 12px;" disabled />

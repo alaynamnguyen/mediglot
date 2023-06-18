@@ -25,7 +25,7 @@
         <div class="column">
             <h3>Original</h3>
             <form action="{{ next }}" method="post">
-                <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here.">{{ result }}</textarea> 
+                <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here.">{% if original %}{{ original }}{% endif %}</textarea> 
                 <input type="submit" name="morelaymans" value="Simplify More" class="morelaymans-button" id = "simplifyButton" style="background-color: #a33210; margin-top: 12px;" onclick="showLoadingButton()" />
                 <input type="submit" id="loadingButton" class="loading-button" value="Loading..." style="background-color: #67bba6; margin-top: 12px;" disabled />
                 <input type="submit" name="translate" value="Translate" class="translate-button" style="background-color: #a38a10; margin-top: 12px;" />
@@ -35,7 +35,7 @@
         <div class="column">
             <h3>Translation</h3>
             <div class="result">
-                <textarea type="text" name="simplified_text" placeholder="Simplified text here.">{{ result }}</textarea> 
+                <textarea type="text" name="simplified_text" placeholder="Simplified text here.">{% if result %}{{ result }}{% endif %}</textarea> 
             </div>
             {% if result %}
             <audio controls>
