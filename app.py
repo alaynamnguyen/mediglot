@@ -9,6 +9,8 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=("GET", "POST"))
 def index():
+    print("INDEX", request.form)
+    print()
     if request.method == "POST":
         if "simplify" in request.form:
             medical_text = request.form["medical_text"]
@@ -23,11 +25,13 @@ def index():
             # Generate speech using gTTS
             tts = gTTS(translated_result, lang='es')
             tts.save('static/output.mp3')
+            next_url = "/more.html"
 
-            return redirect(url_for("more", result=translated_result))
+            return redirect(url_for("more", result=translated_result, next=next_url))
         elif "restart" in request.form:
             response = ""
-            return redirect(url_for("index", result=response))
+            next_url = "/"
+            return redirect(url_for("index", result=response, next=next_url))
     
     result = request.args.get("result")
     # translated_result = translate_en_to_es(result)
@@ -35,26 +39,30 @@ def index():
 
 @app.route("/more", methods=("GET", "POST"))
 def more():
-    if request.method == "POST":
-        if "morelaymans" in request.form:
-            medical_text = request.form["medical_text"]
-            simplified_text = generate_simplified_text(medical_text)
-            response = openai.ChatCompletion.create(
-                model="gpt-3.5-turbo",
-                messages=[{"role": "user", "content": simplified_text}]
-            )
+    print("MORE", request.form)
+    print()
+    # if request.method == "POST":
+    if "morelaymans" in request.form:
+        medical_text = request.form["medical_text"]
+        simplified_text = generate_simplified_text(medical_text)
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": simplified_text}]
+        )
 
-            result2 = response['choices'][0].message.content.lstrip('\n')
-            translated_result = translate_and_join(result2, translate_en_to_es)
-        
-            # Generate speech using gTTS
-            tts = gTTS(translated_result, lang='es')
-            tts.save('static/output.mp3')
+        result2 = response['choices'][0].message.content.lstrip('\n')
+        translated_result = translate_and_join(result2, translate_en_to_es)
+    
+        # Generate speech using gTTS
+        tts = gTTS(translated_result, lang='es')
+        tts.save('static/output.mp3')
+        next_url = "/more.html"
 
-            return redirect(url_for("more", result=translated_result))
-        elif "restart" in request.form:
-            response = ""
-            return redirect(url_for("index", result=response))
+        return redirect(url_for("more", result=translated_result, next=next_url))
+    elif "restart" in request.form:
+        response = ""
+        next_url = "/"
+        return redirect(url_for("index", result=response, next=next_url))
 
     result = request.args.get("result")
     return render_template("more.html", result=result)
@@ -68,7 +76,7 @@ def generate_prompt(medical_text):
     )
 
 def generate_simplified_text(medical_text):
-    return """Rephrase this text: "{}" to be a little bit simpler and keep it to 10 sentences.
+    return """Rephrase this text: "{}" to be way more simpler and keep it to 10 sentences.
     """.format(
         medical_text.capitalize()
     )
