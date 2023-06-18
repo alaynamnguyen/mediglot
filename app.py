@@ -9,12 +9,13 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 @app.route("/", methods=("GET", "POST"))
 def index():
     if request.method == "POST":
-        medical_text = request.form["medical_text"]
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": generate_prompt(medical_text)}]
-        )
-        return redirect(url_for("index", result=response['choices'][0].message.content.lstrip('\n')))
+        if request.form.get("simplify"):
+            medical_text = request.form["medical_text"]
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": generate_prompt(medical_text)}]
+            )
+            return redirect(url_for("index", result=response['choices'][0].message.content.lstrip('\n')))
     
     result = request.args.get("result")
     # translated_result = translate_en_to_es(result)
