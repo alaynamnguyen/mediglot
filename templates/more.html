@@ -13,7 +13,8 @@
   <h3>Mediglot.ai</h3>
   <form action="{{ next }}" method="post">
     <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here.">{{ result }}</textarea> 
-    <input type="submit" name="morelaymans" value="Simplify More" class="morelaymans-button" style="background-color: #a33210;" />
+    <input type="submit" name="morelaymans" value="Simplify More" class="morelaymans-button" id = "simplifyButton" style="background-color: #a33210; margin-top: 12px;" onclick="showLoadingButton()" />
+    <input type="submit" id="loadingButton" class="loading-button" value="Loading..." style="background-color: #67bba6; margin-top: 12px;" disabled />
     <input type="submit" name="restart" value="Restart" class="restart-button" style="background-color: #1094a3; margin-top: 12px;" />
   </form>
   {% if result %}
@@ -23,5 +24,12 @@
     Your browser does not support the audio element.
   </audio>
   {% endif %}
+
+  <script>
+    function showLoadingButton() {
+      document.getElementById("simplifyButton").style.display = "none";
+      document.getElementById("loadingButton").style.display = "inline-block";
+    }
+  </script>
 </body>
 </body>

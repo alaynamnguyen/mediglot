@@ -30,15 +30,15 @@ def index():
             tts.save('static/output.mp3')
             next_url = "/more.html"
 
-            return redirect(url_for("more", result=translated_result, next=next_url))
+            return redirect(url_for("more", result=translated_result, next=next_url, loading=True))
         elif "restart" in request.form:
             response = ""
             next_url = "/"
-            return redirect(url_for("index", result=response, next=next_url))
+            return redirect(url_for("index", result=response, next=next_url, loading=False))
     
     result = request.args.get("result")
     # translated_result = translate_en_to_es(result)
-    return render_template("index.html", result=result)
+    return render_template("index.html", result=result, loading=False)
 
 @app.route("/more", methods=("GET", "POST"))
 def more():
@@ -58,14 +58,14 @@ def more():
         tts.save('static/output.mp3')
         next_url = "/more.html"
 
-        return redirect(url_for("more", result=translated_result, next=next_url))
+        return redirect(url_for("more", result=translated_result, next=next_url, loading=True))
     elif "restart" in request.form:
         response = ""
         next_url = "/"
-        return redirect(url_for("index", result=response, next=next_url))
+        return redirect(url_for("index", result=response, next=next_url, loading=False))
 
     result = request.args.get("result")
-    return render_template("more.html", result=result)
+    return render_template("more.html", result=result, loading=False)
 
 def generate_prompt(medical_text):
     return """Rephrase this text: "{}" into layman's terms 

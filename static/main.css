@@ -73,6 +73,6 @@ input[type="submit"] {
 audio {
   margin-top: 12px;
 }
-/* .hidden {
+.loading-button {
   display: none;
-} */
+}
