@@ -16,10 +16,13 @@
     <input type="file" name="audio" accept="audio/*">
     <input type="submit" name="simplify" value="Simplify" class="simplify-button" id="simplifyButton" style="margin-top: 12px;" onclick="showLoadingButton()" />
     <input type="submit" id="loadingButton" class="loading-button" value="Loading..." style="background-color: #67bba6; margin-top: 12px;" disabled />
+    <input type="submit" name="translate" value="Translate" class="translate-button" style="background-color: #a38a10; margin-top: 12px;" />
     <input type="submit" name="restart" value="Restart" class="restart-button" style="background-color: #1094a3; margin-top: 12px;" />
   </form>
+  <div class="result">
+    <textarea type="text" name="simplified_text" placeholder="Simplified text here.">{{ result }}</textarea> 
+  </div>
   {% if result %}
-  <div class="result">{{ result }}</div>
   <audio controls>
     <source src="{{ url_for('static', filename='output.mp3') }}" type="audio/mpeg">
     Your browser does not support the audio element.

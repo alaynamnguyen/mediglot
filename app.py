@@ -19,11 +19,20 @@ def index():
             
             # Convert speech to text
             audio_file= open("Delaware St 2.mp3", "rb")
-            transcript = openai.Audio.transcribe("whisper-1", audio_file)
-            # audio_file = request.files["audio"]
-            # transcript = transcribe_speech(audio_file)
-            result2 = transcript['text'][0].lstrip('\n')
-            translated_result = translate_and_join2(transcript, translate_en_to_es)
+            medical_text = openai.Audio.transcribe("whisper-1", audio_file)
+            medical_text = medical_text['text'].lstrip('\n')
+            print(medical_text)
+
+            # Simplify english transcript
+            simplified_text = generate_prompt(medical_text)
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": simplified_text}]
+            )
+            translated = response['choices'][0].message.content.lstrip('\n')
+
+            # Translate simplified english
+            translated_result = translate_and_join2(translated, translate_en_to_es)
         
             # Generate speech using gTTS
             tts = gTTS(translated_result, lang='es')
@@ -35,6 +44,25 @@ def index():
             response = ""
             next_url = "/"
             return redirect(url_for("index", result=response, next=next_url, loading=False))
+        elif "translate" in request.form:
+            # Check if the request contains an audio file
+            if "audio" not in request.files:
+                return "No audio file provided", 400
+            
+            # Convert speech to text
+            audio_file= open("Delaware St 2.mp3", "rb")
+            transcript = openai.Audio.transcribe("whisper-1", audio_file)
+            medical_text = transcript['text'].lstrip('\n')
+
+            # Translate simplified english
+            translated_result = translate_and_join2(medical_text, translate_en_to_es)
+        
+            # Generate speech using gTTS
+            tts = gTTS(translated_result, lang='es')
+            tts.save('static/output.mp3')
+            next_url = "/more.html"
+
+            return redirect(url_for("more", result=translated_result, next=next_url, loading=True))
     
     result = request.args.get("result")
     # translated_result = translate_en_to_es(result)
@@ -99,12 +127,8 @@ def translate_and_join(text, translate):
     return joined_text
 
 def translate_and_join2(transcript, translate):
-    print(transcript)
-    # Extract the text from the transcript object
-    text = transcript['text']
-
     # Split text by periods
-    split_text = text.split('. ')
+    split_text = transcript.split('. ')
 
     # Loop through each element and apply 'translate' function
     translated_text = [translate(sentence)[:-1] for sentence in split_text]
