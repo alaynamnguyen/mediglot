@@ -58,6 +58,7 @@ def index():
 
             return redirect(url_for("more", result=translated_result, original = medical_text, next=next_url, loading=True))
         elif "restart" in request.form:
+            original = ""
             medical_text = ""
             response = ""
             next_url = "/"
@@ -109,6 +110,7 @@ def more():
 
         return redirect(url_for("more", result=translated_result, original=medical_text, next=next_url, loading=True))
     elif "restart" in request.form:
+        original = ""
         response = ""
         next_url = "/"
         return redirect(url_for("index", result=response, original=original, next=next_url, loading=False))
