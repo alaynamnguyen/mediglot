@@ -49,8 +49,7 @@ def index():
             result = response['choices'][0].message.content.lstrip('\n')
 
             # Translate simplified english
-            # translated_result = translate_and_join(result)
-            translated_result = result
+            translated_result = translate_and_join(result)
         
             # Generate speech using gTTS
             tts = gTTS(translated_result, lang='es')
@@ -74,8 +73,7 @@ def index():
             # medical_text = transcript['text'].lstrip('\n')
 
             # Translate simplified english
-            # translated_result = translate_and_join(medical_text)
-            translated_result = result
+            translated_result = translate_and_join(medical_text)
         
             # Generate speech using gTTS
             tts = gTTS(translated_result, lang='es')
