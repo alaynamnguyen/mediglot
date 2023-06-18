@@ -9,8 +9,6 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=("GET", "POST"))
 def index():
-    print("INDEX", request.form)
-    print()
     if request.method == "POST":
         if "simplify" in request.form:
             medical_text = request.form["medical_text"]
@@ -39,9 +37,6 @@ def index():
 
 @app.route("/more", methods=("GET", "POST"))
 def more():
-    print("MORE", request.form)
-    print()
-    # if request.method == "POST":
     if "morelaymans" in request.form:
         medical_text = request.form["medical_text"]
         simplified_text = generate_simplified_text(medical_text)
