@@ -2,6 +2,7 @@ import os
 from translate import Translator
 import openai
 from flask import Flask, redirect, render_template, request, url_for
+from gtts import gTTS
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -15,6 +16,13 @@ def index():
                 model="gpt-3.5-turbo",
                 messages=[{"role": "user", "content": generate_prompt(medical_text)}]
             )
+
+            result2 = response.choices[0].message.content
+        
+            # Generate speech using gTTS
+            tts = gTTS(result2, lang='en')
+            tts.save('static/output.mp3')
+
             return redirect(url_for("index", result=response['choices'][0].message.content.lstrip('\n')))
     
     result = request.args.get("result")

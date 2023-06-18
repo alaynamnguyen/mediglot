@@ -79,3 +79,6 @@ input[type="restart"] {
   margin-top: 40px;
   height: auto;
 }
+audio {
+  margin-top: 10px;
+}
