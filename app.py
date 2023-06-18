@@ -17,13 +17,14 @@ def index():
                 messages=[{"role": "user", "content": generate_prompt(medical_text)}]
             )
 
-            result2 = response.choices[0].message.content
+            result2 = response['choices'][0].message.content.lstrip('\n')
+            translated_result = translate_and_join(result2, translate_en_to_es)
         
             # Generate speech using gTTS
-            tts = gTTS(result2, lang='en')
+            tts = gTTS(translated_result, lang='es')
             tts.save('static/output.mp3')
 
-            return redirect(url_for("more", result=response['choices'][0].message.content.lstrip('\n')))
+            return redirect(url_for("more", result=translated_result))
         elif "restart" in request.form:
             response = ""
             return redirect(url_for("index", result=response))
@@ -43,13 +44,14 @@ def more():
                 messages=[{"role": "user", "content": simplified_text}]
             )
 
-            result2 = response.choices[0].message.content
+            result2 = response['choices'][0].message.content.lstrip('\n')
+            translated_result = translate_and_join(result2, translate_en_to_es)
         
             # Generate speech using gTTS
-            tts = gTTS(result2, lang='en')
+            tts = gTTS(translated_result, lang='es')
             tts.save('static/output.mp3')
 
-            return redirect(url_for("more", result=response['choices'][0].message.content.lstrip('\n')))
+            return redirect(url_for("more", result=translated_result))
         elif "restart" in request.form:
             response = ""
             return redirect(url_for("index", result=response))
@@ -75,3 +77,15 @@ def translate_en_to_es(text):
     translator = Translator(from_lang='en', to_lang='es')
     translation = translator.translate(text)
     return translation
+
+def translate_and_join(text, translate):
+    # Split text by periods
+    split_text = text.split('. ')
+    
+    # Loop through each element and apply 'translate' function
+    translated_text = [translate(sentence)[:-1] for sentence in split_text]
+    
+    # Join the translated text together
+    joined_text = '. '.join(translated_text).strip()
+    
+    return joined_text
