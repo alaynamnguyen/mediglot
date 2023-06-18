@@ -3,11 +3,11 @@ from translate import Translator
 import openai
 from flask import Flask, redirect, render_template, request, url_for, request
 from gtts import gTTS
-from translatepy import Translator
-from translatepy.exceptions import TranslatepyException, UnknownLanguage
-from werkzeug.utils import secure_filename
-from pydub import AudioSegment
-translator = Translator()
+# from translatepy import Translator
+# from translatepy.exceptions import TranslatepyException, UnknownLanguage
+# from werkzeug.utils import secure_filename
+# from pydub import AudioSegment
+# translator = Translator()
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'recording'
@@ -15,6 +15,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/", methods=("GET", "POST"))
 def index():
+    medical_text = ""
     if request.method == "POST":
         if "simplify" in request.form:
             # Check if the request contains an audio file
@@ -23,15 +24,19 @@ def index():
             
             # recording = "Delaware St 2.mp3"
             # audio_file = open(recording, "rb")
-            text_file = request.form['medical_text']
+            # text_file = request.form['medical_text']
 
-            medical_text = text_file
+            # medical_text = text_file
 
             # if audio_file:
             #     transcript = openai.Audio.transcribe("whisper-1", audio_file)
             #     medical_text = transcript['text'].lstrip('\n')
             # else:
             #     medical_text = text_file
+            # Convert speech to text
+            audio_file= open("Delaware St 2.mp3", "rb")
+            transcript = openai.Audio.transcribe("whisper-1", audio_file)
+            medical_text = transcript['text'].lstrip('\n')
 
             # Simplify english transcript
             simplified_text = generate_prompt(medical_text)
@@ -42,7 +47,8 @@ def index():
             result = response['choices'][0].message.content.lstrip('\n')
 
             # Translate simplified english
-            translated_result = translate_and_join(result)
+            # translated_result = translate_and_join(result)
+            translated_result = result
         
             # Generate speech using gTTS
             tts = gTTS(translated_result, lang='es')
@@ -51,6 +57,7 @@ def index():
 
             return redirect(url_for("more", result=translated_result, next=next_url, loading=True))
         elif "restart" in request.form:
+            medical_text = ""
             response = ""
             next_url = "/"
             return redirect(url_for("index", result=response, next=next_url, loading=False))
@@ -65,7 +72,8 @@ def index():
             # medical_text = transcript['text'].lstrip('\n')
 
             # Translate simplified english
-            translated_result = translate_and_join(medical_text)
+            # translated_result = translate_and_join(medical_text)
+            translated_result = result
         
             # Generate speech using gTTS
             tts = gTTS(translated_result, lang='es')
@@ -76,7 +84,8 @@ def index():
     
     result = request.args.get("result")
     # translated_result = translate_en_to_es(result)
-    return render_template("index.html", result=result, loading=False)
+    
+    return render_template("index.html", result=result, medical_text=medical_text, loading=False)
 
 @app.route("/more", methods=("GET", "POST"))
 def more():

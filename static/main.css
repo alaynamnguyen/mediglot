@@ -1,11 +1,11 @@
 @font-face {
   font-family: "ColfaxAI";
-  src: url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff2)
-      format("woff2"),
+  src: url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff2) format("woff2"),
     url(https://cdn.openai.com/API/fonts/ColfaxAIRegular.woff) format("woff");
   font-weight: normal;
   font-style: normal;
 }
+
 @font-face {
   font-family: "ColfaxAI";
   src: url(https://cdn.openai.com/API/fonts/ColfaxAIBold.woff2) format("woff2"),
@@ -13,6 +13,7 @@
   font-weight: bold;
   font-style: normal;
 }
+
 body,
 input {
   font-size: 16px;
@@ -20,15 +21,18 @@ input {
   color: #353740;
   font-family: "ColfaxAI", Helvetica, sans-serif;
 }
+
 body {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 60px;
 }
+
 .icon {
   width: 34px;
 }
+
 h3 {
   font-size: 32px;
   line-height: 40px;
@@ -36,27 +40,70 @@ h3 {
   color: #202123;
   margin: 16px 0 40px;
 }
-form {
+
+.container {
+  display: flex;
+  width: 100%;
+}
+.bullet-list {
+  text-align: left;
+  font-family: "ColfaxAI", Helvetica, sans-serif;
+  color: #353740;
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.bullet-list ul {
+  list-style-type: disc;
+  margin-left: 0;
+  padding-left: 20px;
+}
+
+.bullet-list ul li {
+  margin-bottom: 10px;
+}
+
+.column {
+  flex-basis: 33.33%;
   display: flex;
   flex-direction: column;
-  width: 320px;
+  /* align-items: center; */
+  text-align: center;
+  margin: 40px;
 }
-textarea[type="text"] {
-  height: 150px;
-  padding: 12px 16px;
-  border: 1px solid #10a37f;
-  border-radius: 4px;
+
+textarea {
+  width: 92%; /* Span the full width of each column */
+  height: 300px;
+  padding: 12px;
+  border: 2px solid #c4c4c4;
+  border-radius: 8px;
   margin-bottom: 24px;
   font-size: 16px;
-  text-align: center;
-  cursor: pointer;
+  line-height: 1.5;
+  resize: none;
+  background-color: #f4f4f4;
+  color: #333;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
+    'Open Sans', 'Helvetica Neue', sans-serif;
 }
-::placeholder {
-  color: #8e8ea0;
-  opacity: 1;
+
+textarea::placeholder {
+  color: #999;
 }
+
+textarea:focus {
+  outline: none;
+  border-color: #10a37f;
+  background-color: #fff;
+  box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.2);
+}
+
+
 input[type="submit"] {
+  width: 100%; /* Span the full width of each column */
   padding: 12px 0;
+  margin-top: 12px; /* Add 12px top margin to each input button */
   color: #fff;
   background-color: #10a37f;
   border: none;
@@ -64,15 +111,18 @@ input[type="submit"] {
   text-align: center;
   cursor: pointer;
 }
+
 .result {
   font-weight: bold;
   margin-top: 40px;
   height: auto;
-  width: 80%;
+  width: 100%;
 }
+
 audio {
   margin-top: 12px;
 }
+
 .loading-button {
   display: none;
 }

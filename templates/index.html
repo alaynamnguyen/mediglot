@@ -6,29 +6,46 @@
 </head>
 
 <body>
-  <img src="{{ url_for('static', filename='hospital.png') }}" class="icon" />
-  <h3>Mediglot.ai</h3>
-  <form action="{{ next }}" method="post" enctype="multipart/form-data">
-    <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here."></textarea> 
-    <input type="file" name="audio" accept="audio/*">
-    <input type="submit" name="simplify" value="Simplify" class="simplify-button" id="simplifyButton" style="margin-top: 12px;" onclick="showLoadingButton()" />
-    <input type="submit" id="loadingButton" class="loading-button" value="Loading..." style="background-color: #67bba6; margin-top: 12px;" disabled />
-    <input type="submit" name="translate" value="Translate" class="translate-button" style="background-color: #a38a10; margin-top: 12px;" />
-    <input type="submit" name="restart" value="Restart" class="restart-button" style="background-color: #1094a3; margin-top: 12px;" />
-
-    <!-- Added Voice Recording Buttons -->
-    <button id="start" disabled>Start recording</button>
-    <button id="stop" disabled>Stop recording</button>
-  </form>
-  <div class="result">
-    <textarea type="text" name="simplified_text" placeholder="Simplified text here.">{{ result }}</textarea> 
+  <div class="container">
+    <div class="column" style="justify-content: center; align-items: center;" >
+      <img src="{{ url_for('static', filename='hospital.png') }}" class="icon" />
+      <h3>Mediglot.ai</h3>
+      <div class="bullet-list">
+        <p>Bienvenido a MediGlot, su traductor médico personal.</p>
+        <ul>
+          <li>Grabe el discurso de alguien presionando el botón de grabación. También puede copiar y pegar en el cuadro de mensaje original.</li>
+          <li>Presiona “Traducir” para traducir el mensaje. Presione "simplificar" para explicar la información médica.</li>
+          <li>Presione "Reiniciar" para borrar el mensaje original.</li>
+        </ul>
+      </div>
+      <!-- Added Voice Recording Buttons -->
+      <button id="start" disabled>Start recording</button>
+      <button id="stop" disabled>Stop recording</button>
+    </div>
+    <div class="column">
+      <h3>Original</h3>
+      <form action="{{ next }}" method="post" enctype="multipart/form-data">
+        <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here."></textarea> 
+        <input type="file" name="audio" accept="audio/*">
+        <input type="submit" name="simplify" value="Simplify" class="simplify-button" id="simplifyButton" style="margin-top: 12px;" onclick="showLoadingButton()" />
+        <input type="submit" id="loadingButton" class="loading-button" value="Loading..." style="background-color: #67bba6; margin-top: 12px;" disabled />
+        <input type="submit" name="translate" value="Translate" class="translate-button" style="background-color: #a38a10; margin-top: 12px;" />
+        <input type="submit" name="restart" value="Restart" class="restart-button" style="background-color: #1094a3; margin-top: 12px;" />
+      </form>
+    </div>
+    <div class="column">
+      <h3>Translation</h3>
+      <div class="result">
+        <textarea type="text" name="simplified_text" placeholder="Simplified text here." style="height: 500px;">{% if result %}{{ result }}{% endif %}</textarea> 
+      </div>
+      {% if result %}
+      <audio controls>
+        <source src="{{ url_for('static', filename='output.mp3') }}" type="audio/mpeg">
+        Your browser does not support the audio element.
+      </audio>
+      {% endif %}
+    </div>
   </div>
-  {% if result %}
-  <audio controls>
-    <source src="{{ url_for('static', filename='output.mp3') }}" type="audio/mpeg">
-    Your browser does not support the audio element.
-  </audio>
-  {% endif %}
 
   <script>
     function showLoadingButton() {
