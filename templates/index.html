@@ -12,7 +12,7 @@
   <img src="{{ url_for('static', filename='dog.png') }}" class="icon" />
   <h3>Mediglot.ai</h3>
   <form action="/" method="post">
-    <textarea type="text" name="animal">Enter medical diagnosis to be simplified here</textarea> 
+    <textarea type="text" name="english" placeholder="Enter medical diagnosis to be simplified here."></textarea> 
     <input type="submit" value="Simplify" />
   </form>
   {% if result %}

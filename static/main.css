@@ -42,11 +42,14 @@ form {
   width: 320px;
 }
 textarea[type="text"] {
-  
+  height: 150px;
   padding: 12px 16px;
   border: 1px solid #10a37f;
   border-radius: 4px;
   margin-bottom: 24px;
+  font-size: 16px;
+  text-align: center;
+  cursor: pointer;
 }
 ::placeholder {
   color: #8e8ea0;
@@ -64,4 +67,5 @@ input[type="submit"] {
 .result {
   font-weight: bold;
   margin-top: 40px;
+  height: auto;
 }
