@@ -10,7 +10,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 @app.route("/", methods=("GET", "POST"))
 def index():
     if request.method == "POST":
-        if request.form.get("simplify"):
+        if "simplify" in request.form:
             medical_text = request.form["medical_text"]
             response = openai.ChatCompletion.create(
                 model="gpt-3.5-turbo",
@@ -24,6 +24,9 @@ def index():
             tts.save('static/output.mp3')
 
             return redirect(url_for("index", result=response['choices'][0].message.content.lstrip('\n')))
+        elif "restart" in request.form:
+            response = ""
+            return redirect(url_for("index", result=""))
     
     result = request.args.get("result")
     # translated_result = translate_en_to_es(result)

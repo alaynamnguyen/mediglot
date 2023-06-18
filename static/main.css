@@ -64,16 +64,6 @@ input[type="submit"] {
   text-align: center;
   cursor: pointer;
 }
-input[type="restart"] {
-  padding: 12px 0;
-  color: #fff;
-  background-color: #1094a3;
-  border: none;
-  border-radius: 4px;
-  margin-top: 12px;
-  text-align: center;
-  cursor: pointer;
-}
 .result {
   font-weight: bold;
   margin-top: 40px;
