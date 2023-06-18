@@ -1,5 +1,5 @@
 import os
-from translate import Translator
+# from translate import Translator
 import openai
 from flask import Flask, redirect, render_template, request, url_for
 
@@ -12,7 +12,7 @@ def index():
     if request.method == "POST":
         animal = request.form["animal"]
         response = openai.Completion.create(
-            model="gpt-4",
+            model="gpt-3.5-turbo",
             prompt=generate_prompt(animal),
             temperature=0.6,
         )
