@@ -1,6 +1,9 @@
-# OpenAI API Quickstart - Python example app
+# Mediglot.ai
 
-This is an example pet name generator app used in the OpenAI API [quickstart tutorial](https://beta.openai.com/docs/quickstart). It uses the [Flask](https://flask.palletsprojects.com/en/2.0.x/) web framework. Check out the tutorial or follow the instructions below to get set up.
+MediGlot.ai leverages GPT-3.5 to simplify and translate doctor instructions for patients whose first language may not be English to better understand and make informed decisions about their health.
+
+## How we built it
+Our project is built with the following languages: Python, Flask, HTML, CSS, and Javascript. We also made use of partner resources including Pinecone, Featureform, and OpenAI. Lastly, we used Google text-to-speech software.
 
 ## Setup
 
@@ -11,7 +14,7 @@ This is an example pet name generator app used in the OpenAI API [quickstart tut
 3. Navigate into the project directory:
 
    ```bash
-   $ cd openai-quickstart-python
+   $ cd mediglot
    ```
 
 4. Create a new virtual environment:
@@ -41,4 +44,4 @@ This is an example pet name generator app used in the OpenAI API [quickstart tut
    $ flask run
    ```
 
-You should now be able to access the app at [http://localhost:5000](http://localhost:5000)! For the full context behind this example app, check out the [tutorial](https://beta.openai.com/docs/quickstart).
+You should now be able to access the app at [http://localhost:5000](http://localhost:5000)!
