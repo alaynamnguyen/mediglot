@@ -3,7 +3,7 @@
 MediGlot.ai leverages GPT-3.5 to simplify and translate doctor instructions for patients whose first language may not be English to better understand and make informed decisions about their health.
 
 ## How we built it
-Our project is built with the following languages: Python, Flask, HTML, CSS, and Javascript. We also made use of partner resources including Pinecone, Featureform, and OpenAI. Lastly, we used Google text-to-speech software.
+Our project is built with the following languages: Python, Flask, HTML, CSS, and Javascript. We also made use of partner resources including Pinecone, Featureform, and OpenAI (Whisper, GPT-3.5). Lastly, we used Google text-to-speech software.
 
 ## Setup
 
