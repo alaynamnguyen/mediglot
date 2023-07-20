@@ -48,11 +48,12 @@ def index():
             )
             result = response['choices'][0].message.content.lstrip('\n')
 
+            selected_language = request.form.get("selected_language", "en")
             # Translate simplified english
-            translated_result = translate_and_join(result)
+            translated_result = translate_and_join(result, selected_language)
         
             # Generate speech using gTTS
-            tts = gTTS(translated_result, lang='es')
+            tts = gTTS(translated_result, lang=selected_language)
             tts.save('static/output.mp3')
             next_url = "/more.html"
 
@@ -73,11 +74,13 @@ def index():
             # transcript = openai.Audio.transcribe("whisper-1", audio_file)
             # medical_text = transcript['text'].lstrip('\n')
 
+            selected_language = request.form.get("selected_language", "en")
+
             # Translate simplified english
-            translated_result = translate_and_join(medical_text)
+            translated_result = translate_and_join(medical_text, selected_language)
         
             # Generate speech using gTTS
-            tts = gTTS(translated_result, lang='es')
+            tts = gTTS(translated_result, lang=selected_language)
             tts.save('static/output.mp3')
             next_url = "/more.html"
 
@@ -101,10 +104,11 @@ def more():
         )
 
         result = response['choices'][0].message.content.lstrip('\n')
-        translated_result = translate_and_join(result)
+        selected_language = request.form.get("selected_language", "en")
+        translated_result = translate_and_join(result, selected_language)
     
         # Generate speech using gTTS
-        tts = gTTS(translated_result, lang='es')
+        tts = gTTS(translated_result, lang=selected_language)
         tts.save('static/output.mp3')
         next_url = "/more.html"
 
@@ -133,9 +137,9 @@ def generate_simplified_text(medical_text):
         medical_text.capitalize()
     )
 
-def translate(text):
+def translate(text, target_language):
     try:
-        result = translator.translate(text, destination_language = 'es', source_language = 'auto')
+        result = translator.translate(text, destination_language = target_language, source_language = 'auto')
         return result
     except UnknownLanguage as err:
         print('Couldn\'t recognize the language. The language found is: ', err.guessed_language)
@@ -148,12 +152,14 @@ def translate(text):
         print('An unknown error occured')
         return    
 
-def translate_and_join(text):
+def translate_and_join(text, target_language):
+    print(target_language)
+    
     # Split text by periods
     split_text = text.split('. ')
     
     # Loop through each element and apply 'translate' function
-    translated_text = [translate(sentence).result[:-1] for sentence in split_text]
+    translated_text = [translate(sentence, target_language).result[:-1] for sentence in split_text]
     
     # Join the translated text together
     joined_text = '. '.join(translated_text).strip()

@@ -18,18 +18,27 @@
           <li>Presione "Reiniciar" para borrar el mensaje original.</li>
         </ul>
       </div>
-      <!-- Added Voice Recording Buttons -->
-      <button id="start" disabled>Start recording</button>
-      <button id="stop" disabled>Stop recording</button>
+      <div class="language-dropdown">
+        <label for="language">Select Language:</label>
+        <select name="language" id="language">
+          <option value="es">Spanish</option>
+          <option value="fr">French</option>
+          <!-- Add more options for other languages as needed -->
+        </select>
+        <input type="hidden" name="selected_language" id="selectedLanguageField" value="">
+      </div>
+      <div class="recording-buttons">
+        <button id="recordingButton" disabled onclick="toggleRecording()">Start Recording</button>
+      </div>
     </div>
     <div class="column">
       <h3>Original</h3>
       <form action="{{ next }}" method="post" enctype="multipart/form-data">
         <textarea type="text" name="medical_text" placeholder="Enter medical diagnosis to be simplified here.">{% if original %}{{ original }}{% endif %}</textarea> 
         <input type="file" name="audio" accept="audio/*">
-        <input type="submit" name="simplify" value="Simplify" class="simplify-button" id="simplifyButton" style="margin-top: 12px;" onclick="showLoadingButton()" />
+        <input type="submit" name="simplify" value="Simplify" class="simplify-button" id="simplifyButton" style="margin-top: 12px;" onclick="showLoadingButton(); triggerTranslation();" />
         <input type="submit" id="loadingButton" class="loading-button" value="Loading..." style="background-color: #67bba6; margin-top: 12px;" disabled />
-        <input type="submit" name="translate" value="Translate" class="translate-button" style="background-color: #a38a10; margin-top: 12px;" />
+        <input type="submit" name="translate" value="Translate" class="translate-button" style="background-color: #a38a10; margin-top: 12px;" onclick="showLoadingButton(); triggerTranslation();"/>
         <input type="submit" name="restart" value="Restart" class="restart-button" style="background-color: #1094a3; margin-top: 12px;" />
       </form>
     </div>
@@ -55,18 +64,20 @@
     
     let mediaRecorder;
     let chunks = [];
+    let isRecording = false;
 
     navigator.mediaDevices.getUserMedia({ audio: true })
       .then(stream => {
         mediaRecorder = new MediaRecorder(stream);
-        document.getElementById('start').disabled = false;
+        document.getElementById('recordingButton').disabled = false;
+        // document.getElementById('start').disabled = false;
 
         mediaRecorder.ondataavailable = event => {
           chunks.push(event.data);
         };
 
         mediaRecorder.onstop = () => {
-          let blob = new Blob(chunks, { 'type' : 'audio/webm' });
+          let blob = new Blob(chunks, { 'type': 'audio/webm' });
           chunks = [];
           let formData = new FormData();
           formData.append('audio', blob, 'audio.webm');
@@ -84,8 +95,32 @@
               .catch(error => {
                   console.error('Error:', error);
               });
+              isRecording = false;
+          document.getElementById('recordingButton').innerText = 'Start Recording';
         };
       });
+
+      function toggleRecording() {
+      if (!isRecording) {
+        // Start recording
+        mediaRecorder.start();
+        isRecording = true;
+        document.getElementById('recordingButton').innerText = 'Stop Recording';
+        document.getElementById('recordingButton').classList.add('recording');
+      } else {
+        // Stop recording
+        mediaRecorder.stop();
+        isRecording = false;
+        document.getElementById('recordingButton').innerText = 'Start Recording';
+        document.getElementById('recordingButton').classList.remove('recording');
+      }
+    }
+
+    function triggerTranslation() {
+    const selectedLanguage = document.getElementById('language').value;
+    document.getElementById('selectedLanguageField').value = selectedLanguage;
+    document.getElementById('translationForm').submit();
+  }
 
     document.getElementById('start').addEventListener('click', () => {
       mediaRecorder.start();

@@ -126,3 +126,38 @@ audio {
 .loading-button {
   display: none;
 }
+
+.language-dropdown {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.language-dropdown select {
+  padding: 8px;
+  font-size: 16px;
+  border: 2px solid #c4c4c4;
+  border-radius: 8px;
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.language-dropdown label {
+  margin-right: 10px;
+  font-size: 16px;
+}
+
+/* Styling for the recording buttons */
+#recordingButton {
+  padding: 12px 20px;
+  font-size: 16px;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #10a37f; /* Default color for "Start Recording" state */
+}
+
+#recordingButton.recording {
+  background-color: #ff5a5a; /* Color for "Stop Recording" state */
+}
